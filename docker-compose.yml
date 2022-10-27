@@ -1,0 +1,15 @@
+version: '3'
+volumes:
+  captures:
+services:
+  camera-app:
+    container_name: cam
+    image: my_app
+    ports:
+      - '127.0.0.1:8080:8080'
+    devices:
+      - '/dev/video0:/dev/video0'
+    volumes:
+      - type: bind
+        source: ./static/captures
+        target: /app/static/captures
