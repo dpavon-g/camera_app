@@ -4,9 +4,12 @@ import shutil
 from flask import Flask, render_template, request, \
     Response, send_file, redirect, url_for
 from camera import Camera
+from face_verify import FaceCognitive
 
 app = Flask(__name__)
 camera = None
+stamp = 'Time'
+picFolder = os.path.join('static', 'captures')
 
 def get_camera():
     global camera
@@ -40,13 +43,16 @@ def video_feed():
 
 @app.route('/capture/')
 def capture():
+    global stamp
     camera = get_camera()
     stamp = camera.capture()
     return redirect(url_for('show_capture', timestamp=stamp))
 
 @app.route('/identify', methods = ['GET', 'POST'])
 def identify():
-    return render_template('identify.html')
+    fullPath = os.path.join(picFolder, stamp)
+    myString = FaceCognitive().faceCompare(fullPath+'.jpg', 'testImages/yo1.JPG')
+    return render_template('identify.html', myPath=fullPath+'.jpg', finalThing=myString)
 
 def stamp_file(timestamp):
     return 'captures/' + timestamp +".jpg"
